@@ -32,7 +32,7 @@ def create_docx(protocol: Protocol, display_names: dict[str, str] | None = None)
         from docx.enum.text import WD_ALIGN_PARAGRAPH
         from docx.oxml import OxmlElement
         from docx.oxml.ns import qn
-        from docx.shared import Inches, Pt
+        from docx.shared import Inches, Pt, RGBColor
     except ImportError as exc:
         raise ExportError("DOCX export requires python-docx. Install the project requirements.") from exc
 
@@ -46,7 +46,7 @@ def create_docx(protocol: Protocol, display_names: dict[str, str] | None = None)
     styles["Normal"].font.size = Pt(10)
     for style_name in ("Title", "Heading 1", "Heading 2"):
         styles[style_name].font.name = "Arial"
-        styles[style_name].font.color.rgb = None
+        styles[style_name].font.color.rgb = RGBColor(0, 0, 0)
 
     title = document.add_paragraph(style="Title")
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -166,7 +166,7 @@ def create_pdf(protocol: Protocol, display_names: dict[str, str] | None = None) 
         Paragraph(escape(protocol.metadata.title), heading),
         Paragraph(f"Date: {protocol.metadata.meeting_date.isoformat()}", body),
         Paragraph("Participants", heading),
-        Paragraph(escape(", ".join(protocol.metadata.participants) or "Not specified"), body),
+        Paragraph(escape(", ".join(protocol.metadata.participants or list(names.values())) or "Not specified"), body),
         Paragraph("Speaker Mapping", heading),
     ]
 

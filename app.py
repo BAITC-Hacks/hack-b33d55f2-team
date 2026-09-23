@@ -36,7 +36,7 @@ with st.sidebar:
     except (ValueError, OSError) as exc:
         config_valid = False
         st.error(str(exc))
-    st.caption("Results remain in session memory. No meeting files are saved in Phase 2.")
+    st.caption("Results remain in session memory. No meeting files are saved by the application.")
 
 if mode == "Demo":
     st.info("Demo · fictional Russian/Kazakh meeting. It works without Ollama.")
@@ -49,10 +49,10 @@ uploaded_audio = None
 if mode in {"Demo", "Audio (Phase 3)"}:
     uploaded_audio = st.file_uploader(
         "Meeting audio", type=["wav", "mp3", "m4a"],
-        help="Audio is not analyzed or saved in Phase 2.",
+        help="Demo ignores audio. Phase 3 transcribes it locally and deletes its temporary copy.",
     )
     if uploaded_audio is not None and mode == "Demo":
-        st.warning("Your uploaded audio will not be analyzed or saved in Phase 2.")
+        st.warning("Demo mode ignores uploaded audio. Select Audio (Phase 3) to transcribe it locally.")
     elif uploaded_audio is not None:
         st.caption("Audio is held temporarily for local transcription and is not saved by the app.")
 

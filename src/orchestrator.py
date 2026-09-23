@@ -42,7 +42,7 @@ def generate_summary(_transcript):
 
 
 def generate_protocol(metadata, transcript, speakers, action_items, summary):
-    # TODO: Add python-docx and ReportLab exporters in a later phase.
+    # Exporters consume this shared validated Protocol without changing the demo workflow.
     return Protocol(metadata=metadata, transcript=transcript, speakers=speakers,
                     action_items=action_items, summary=summary, is_demo=True)
 

@@ -12,7 +12,7 @@ The Streamlit application has three clearly separated paths:
 
 DOCX and PDF downloads contain meeting metadata, participants, speaker mapping, action items, summary, and transcript. Uploaded audio is written only to an operating-system temporary file during transcription and is deleted immediately afterward. Speaker edits are reflected in displayed and exported results but are not persisted.
 
-### Phase 2 architecture
+### MVP architecture
 
 `src/llm/base.py` defines a provider interface. `src/llm/ollama.py` implements it with the Ollama HTTP API, schema-constrained output, Pydantic validation, and loopback-only URL enforcement. `src/understanding.py` turns pasted lines into evidence-addressable segments, sends one structured request to the local model, and rejects unknown evidence IDs, non-verbatim quotes, invented assignees, and invented deadline phrases before building a Protocol.
 
@@ -100,6 +100,14 @@ Open http://127.0.0.1:8501. Leave **Demo mode** enabled for the offline determin
 Use one utterance per line with `Name: text` or `[Name]: text`. Lines without a prefix use the neutral speaker label `Transcript`. Relative dates are resolved against the meeting date and `Asia/Qyzylorda` timezone when unambiguous. For audio, select **Audio (Phase 3)**, upload WAV/MP3/M4A, and analyze. After any successful mode, use the enabled **Export DOCX** and **Export PDF** download buttons.
 
 The default fictional date is September 23, 2026. Participants are metadata, not automatic voice identification. Input changes apply when the form is submitted. The app preserves results through normal widget reruns; a new session/server restart loses them.
+
+## Presentation demo checklist
+
+1. Start Ollama and verify `ollama list` shows `qwen3:4b-instruct-2507-q4_K_M`.
+2. Start Streamlit with the commands above.
+3. Keep **Demo mode** on, select **Analyze meeting**, edit one speaker name, and download both protocol formats. This path needs neither Ollama nor Whisper.
+4. Turn **Demo mode** off, keep **Text transcript**, paste the short sample above, and analyze it with local Ollama.
+5. Optional audio demo: configure `QURYLTAI_WHISPER_MODEL_PATH`, select **Audio (Phase 3)**, upload a short clear WAV/MP3/M4A clip, and analyze it.
 
 ## Privacy and local storage
 
