@@ -1,4 +1,4 @@
-"""Fixed local workflow. All model stages are explicitly mocked in Phase 1."""
+"""Fixed demo workflow. Real text understanding lives in src.understanding."""
 
 from collections.abc import Callable
 
@@ -32,12 +32,12 @@ def align_speakers(transcript, _speakers):
 
 
 def extract_tasks(_transcript, metadata):
-    # TODO: Connect local Ollama with JSON schema validation and evidence checks.
+    # Demo remains deterministic. Phase 2 text mode uses the local provider separately.
     return demo_tasks(metadata.meeting_date)
 
 
 def generate_summary(_transcript):
-    # TODO: Connect local Ollama; never configure a cloud fallback.
+    # Demo remains deterministic. Phase 2 text mode uses the local provider separately.
     return demo_summary()
 
 

@@ -1,9 +1,12 @@
 """Storage configuration; importing this module never creates directories."""
 
+import math
 import os
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_OLLAMA_MODEL = "qwen3:4b-instruct-2507-q4_K_M"
+DEFAULT_OLLAMA_TIMEOUT_SECONDS = 300.0
 
 
 def get_data_dir() -> Path:
@@ -27,3 +30,25 @@ def get_data_dir() -> Path:
     if path.exists() and not path.is_dir():
         raise ValueError("The data path must be a directory.")
     return path
+
+
+def get_ollama_settings() -> tuple[str, str, float]:
+    """Return local Ollama URL, model, and generation timeout."""
+    # QURYLTAY appeared in early setup notes; retain it as a compatibility alias.
+    model = os.environ.get("QURYLTAI_OLLAMA_MODEL") or os.environ.get("QURYLTAY_OLLAMA_MODEL")
+    timeout_text = (
+        os.environ.get("QURYLTAI_OLLAMA_TIMEOUT_SECONDS")
+        or os.environ.get("QURYLTAY_OLLAMA_TIMEOUT_SECONDS")
+        or str(DEFAULT_OLLAMA_TIMEOUT_SECONDS)
+    )
+    try:
+        timeout_seconds = float(timeout_text.strip())
+    except ValueError as exc:
+        raise ValueError("QURYLTAI_OLLAMA_TIMEOUT_SECONDS must be a positive number of seconds.") from exc
+    if not math.isfinite(timeout_seconds) or timeout_seconds <= 0:
+        raise ValueError("QURYLTAI_OLLAMA_TIMEOUT_SECONDS must be a positive number of seconds.")
+    return (
+        os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434").strip(),
+        (model or DEFAULT_OLLAMA_MODEL).strip(),
+        timeout_seconds,
+    )

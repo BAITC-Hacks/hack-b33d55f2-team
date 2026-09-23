@@ -43,12 +43,16 @@ class ActionItem(Schema):
     deadline_original: str | None = None
     deadline_normalized: date | None = None
     evidence_segment_ids: list[str] = Field(min_length=1)
+    source_quote: str | None = None
+    confidence: float | None = Field(default=None, ge=0, le=1)
     status: Literal["open", "in_progress", "done"] = "open"
 
 
 class MeetingSummary(Schema):
     overview: str
     discussion_points: list[str] = Field(default_factory=list)
+    main_topics: list[str] = Field(default_factory=list)
+    key_problems: list[str] = Field(default_factory=list)
     decisions: list[str] = Field(default_factory=list)
 
 
@@ -71,3 +75,27 @@ class Protocol(Schema):
         if any(not set(item.evidence_segment_ids) <= segment_ids for item in self.action_items):
             raise ValueError("Action item references an unknown segment.")
         return self
+
+
+class LLMActionItem(Schema):
+    """Exact structure requested from the local model before Protocol conversion."""
+
+    assignee: str | None = None
+    task: str = Field(min_length=1)
+    deadline_original: str | None = None
+    deadline_normalized: date | None = None
+    evidence_segment_ids: list[str] = Field(min_length=1)
+    source_quote: str = Field(min_length=1)
+    confidence: float = Field(ge=0, le=1)
+
+
+class LLMMeetingSummary(Schema):
+    overall_summary: str = Field(min_length=1)
+    main_topics: list[str] = Field(default_factory=list)
+    key_problems: list[str] = Field(default_factory=list)
+    decisions: list[str] = Field(default_factory=list)
+
+
+class MeetingUnderstanding(Schema):
+    action_items: list[LLMActionItem] = Field(default_factory=list)
+    summary: LLMMeetingSummary
